@@ -9,6 +9,16 @@ const app = express();
 
 app.use(express.json()); // allows accepting Json data in the req.body
 
+app.get("/api/notes", async (req, res) => {
+  try {
+    const notes = await Note.find({});
+    res.status(200).json({ success: true, data: notes });
+  } catch (error) {
+    console.log("Error in get notes", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 app.post("/api/notes", async (req, res) => {
   const note = req.body; // user will send this data
 
@@ -32,8 +42,9 @@ app.delete("/api/notes/:id", async (req, res) => {
   const { id } = req.params;
   try {
     await Note.findByIdAndDelete(id);
-    res.status(200).json({ success: true, message: "Note deleted successfully" });
+    res.status(200).json({ success: true, message: "Note deleted" });
   } catch (error) {
+    console.log("error in deleting product", error.message);
     res.status(404).json({ success: false, message: "Note not found" });
   }
 });
